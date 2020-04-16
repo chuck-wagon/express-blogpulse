@@ -5,6 +5,16 @@ var moment = require('moment')
 var rowdy = require('rowdy-logger')
 var app = express()
 
+var db = require('./models')
+
+db.article.findOne({
+  where: { id: 1 },
+  include: [db.comment]
+}).then(function(article) {
+  // by using eager loading, the article model should have a comments key
+  console.log(article.comments)
+})
+
 rowdy.begin(app)
 
 app.set('view engine', 'ejs')
@@ -36,7 +46,7 @@ app.get('/', function(req, res) {
 app.use('/authors', require('./controllers/authors'))
 app.use('/articles', require('./controllers/articles'))
 
-var server = app.listen(process.env.PORT || 3000, function() {
+var server = app.listen(process.env.PORT || 8000, function() {
   rowdy.print()
 })
 
